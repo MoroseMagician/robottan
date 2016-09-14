@@ -4,29 +4,29 @@
 
 /* Hluti 2
 
-  -- Psuedocode --
-  m = distance for one rotation of the wheels
-  m = circumference of wheel
-  m = 2 * pi * radius of wheel
+   -- Psuedocode --
+   m = distance for one rotation of the wheels
+   m = circumference of wheel
+   m = 2 * pi * radius of wheel
 
-  n = rotations for half meter
+   n = rotations for half meter
 
-	while True:
-		do 3 times:
-		  i = iteration number
-		  move_forwards(n * i)
-		  wait(1 second)
-		  move_backwards(n * i)
-		  wait(1 second)
+   while True:
+       do 3 times:
+           i = iteration number
+           move_forwards(n * i)
+           wait(1 second)
+           move_backwards(n * i)
+           wait(1 second)
 
-	-- Psuedocode --
+   -- Psuedocode --
 
-	Circumference of wheel = 2 * pi * 4 = 25,13 cm
-	50 / 25,13 = 1,9896538002387584560286510147234
-	~2 rotations for a half meter
+   Circumference of wheel = 2 * pi * 4 = 25,13 cm
+   50 / 25,13 = 1,9896538002387584560286510147234
+   ~2 rotations for a half meter
 
-	2 * 360 = 720
-	~720 deg of rotation on the shaft encoder for half a meter
+   2 * 360 = 720
+   ~720 deg of rotation on the shaft encoder for half a meter
 
 */
 
@@ -37,67 +37,66 @@ static const int BACKWARDS = -1;
 static const float N = 720;
 
 void move(int speed, int direction, int rotations) {
-  //Self-correcting movement function, moves based on rotations of the wheels
+    //Self-correcting movement function, moves based on rotations of the wheels
 
-  //Reset the encoders
-  SensorValue[Encoder1] = 0;
-  SensorValue[Encoder2] = 0;
+    //Reset the encoders
+    SensorValue[Encoder1] = 0;
+    SensorValue[Encoder2] = 0;
 
-  while (abs(SensorValue[Encoder1]) < rotations) {
-    motor[port2] = speed * direction;
-		motor[port3]  = -speed * direction;
+    while (abs(SensorValue[Encoder1]) < rotations) {
+        motor[port2] = speed * direction;
+        motor[port3]  = -speed * direction;
 
-		// If the robot is moving forwards, execute the following
-		if (direction == 1) {
-		  if (SensorValue[Encoder1] == SensorValue[Encoder2]) {
-				// The motors are synchronized
-				motor[port2] = speed * direction;
-				motor[port3]  = -speed * direction;
-		  }
-			else if (SensorValue[Encoder1] > SensorValue[Encoder2]) {
-				// Motors are not synchronized, correct with motor port 2
-				motor[port2] = 0.7 * speed * direction;
-				motor[port3]  = -speed * direction;
-			}
-			else {
-			  motor[port2] = speed * direction;
-			  motor[port3] = 0.7 * -speed * direction;
-		  }
-	  }
-	  // The robot is moving backwards, do this
-	  else {
-	    if (SensorValue[Encoder1] == SensorValue[Encoder2]) {
-				// The motors are synchronized
-				motor[port2] = speed * direction;
-				motor[port3]  = -speed * direction;
-		  }
-			else if (SensorValue[Encoder1] < SensorValue[Encoder2]) {
-				// Motors are not synchronized, correct with motor port 2
-				motor[port2] = 0.7 * speed * direction;
-				motor[port3]  = -speed * direction;
-			}
-			else {
-			  motor[port2] = speed * direction;
-			  motor[port3] = 0.7 * -speed * direction;
-		  }
-	  }
-  }
+        // If the robot is moving forwards, execute the following
+        if (direction == 1) {
+            if (SensorValue[Encoder1] == SensorValue[Encoder2]) {
+                // The motors are synchronized
+                motor[port2] = speed * direction;
+                motor[port3]  = -speed * direction;
+            }
+            else if (SensorValue[Encoder1] > SensorValue[Encoder2]) {
+                // Motors are not synchronized, correct with motor port 2
+                motor[port2] = 0.7 * speed * direction;
+                motor[port3]  = -speed * direction;
+            }
+            else {
+                motor[port2] = speed * direction;
+                motor[port3] = 0.7 * -speed * direction;
+            }
+        }
+        // The robot is moving backwards, do this
+        else {
+            if (SensorValue[Encoder1] == SensorValue[Encoder2]) {
+                // The motors are synchronized
+                motor[port2] = speed * direction;
+                motor[port3]  = -speed * direction;
+            }
+            else if (SensorValue[Encoder1] < SensorValue[Encoder2]) {
+                // Motors are not synchronized, correct with motor port 2
+                motor[port2] = 0.7 * speed * direction;
+                motor[port3]  = -speed * direction;
+            }
+            else {
+                motor[port2] = speed * direction;
+                motor[port3] = 0.7 * -speed * direction;
+            }
+        }
+    }
 }
 
 void wait(int milliseconds) {
-  motor[port2] = 0;
-  motor[port3] = 0;
-  wait1Msec(milliseconds);
+    motor[port2] = 0;
+    motor[port3] = 0;
+    wait1Msec(milliseconds);
 }
 
-task main()
-{
-  for (int i = 1; i < 4; i++) {
-    wait(1000);
-    //There's a discrepancy between the calculations and the distance the robot moves, hence adding a flat 50 to N
-	  move(FULL_SPEED / 2, FORWARDS, (N+50) * i);
+task main() { 
+    for (int i = 1; i < 4; i++) {
+        wait(1000);
+        //There's a discrepancy between the calculations and the distance the robot moves, hence adding a flat 50 to N
+        move(FULL_SPEED / 2, FORWARDS, (N+50) * i);
 
-	  wait(1000);
-	  move(FULL_SPEED / 2, BACKWARDS, (N+50) * i);
-  }
+        wait(1000);
+        move(FULL_SPEED / 2, BACKWARDS, (N+50) * i);
+    }
 }

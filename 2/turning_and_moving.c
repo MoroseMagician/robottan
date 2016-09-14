@@ -11,158 +11,158 @@ static const float M = 2.896;
 
 /*
 
-  --- BEGIN PSUEDOCODE ---
+   --- BEGIN PSUEDOCODE ---
 
-do 3 times:
-  i = iteration number
-  move(forwards, 0.5 meter)
-  if i is:
-    0: turn left 90 deg   (90 deg)
-    1: turn right 90 deg  (-90 deg)
-    2: turn right 90 deg  (-90 deg)
+   do 3 times:
+       i = iteration number
+       move(forwards, 0.5 meter)
+       if i is:
+           0: turn left 90 deg   (90 deg)
+           1: turn right 90 deg  (-90 deg)
+           2: turn right 90 deg  (-90 deg)
 
-  --- END PSUEDOCODE ---
+--- END PSUEDOCODE ---
 
-  Circumference of wheel = 2 * pi * 4 = 25,13 cm
-	50 / 25,13 = 1,9896538002387584560286510147234
-	~2 rotations for a half meter
+    Circumference of wheel = 2 * pi * 4 = 25,13 cm
+    50 / 25,13 = 1,9896538002387584560286510147234
+    ~2 rotations for a half meter
 
-	2 * 360 = 720
-	~720 deg of rotation on the shaft encoder for half a meter
+    2 * 360 = 720
+    ~720 deg of rotation on the shaft encoder for half a meter
 
     --- Determining the ratio between rotation of the wheels and robot ---
 
-      R = average distance from the centrum of the robot to the wheels
-      r = radius of a wheel
+    R = average distance from the centrum of the robot to the wheels
+    r = radius of a wheel
 
-      C = 2 * pi * R
-      c = 2 * pi * r
-      M = ratio = C/c
-      m = M/360
+    C = 2 * pi * R
+    c = 2 * pi * r
+    M = ratio = C/c
+    m = M/360
 
-      M is how often a wheel has to turn to go around the "radius" of the robot
-      m is turns of a wheel to a single degree of rotation of the robot
+    M is how often a wheel has to turn to go around the "radius" of the robot
+    m is turns of a wheel to a single degree of rotation of the robot
 
-      R = 13cm
-      r = 4.5cm
+    R = 13cm
+    r = 4.5cm
 
-      C = 81.86cm
-      c = 28.27cm
+    C = 81.86cm
+    c = 28.27cm
 
-      M = 2,8956490979837283339228864520693
-      M = ~2.896
+    M = 2,8956490979837283339228864520693
+    M = ~2.896
 
-      m = 2.896
+    m = 2.896
 
 */
 
 void move(int speed, int direction, int rotations) {
-  //Self-correcting movement function, moves based on rotations of the wheels
+    //Self-correcting movement function, moves based on rotations of the wheels
 
-  //Reset the encoders
-  SensorValue[Encoder1] = 0;
-  SensorValue[Encoder2] = 0;
+    //Reset the encoders
+    SensorValue[Encoder1] = 0;
+    SensorValue[Encoder2] = 0;
 
-  while (abs(SensorValue[Encoder1]) < rotations) {
-    motor[rightMotor] = speed * direction;
-		motor[leftMotor]  = speed * direction;
+    while (abs(SensorValue[Encoder1]) < rotations) {
+        motor[rightMotor] = speed * direction;
+        motor[leftMotor]  = speed * direction;
 
-		// If the robot is moving forwards, execute the following
-		if (direction == 1) {
-		  if (SensorValue[Encoder1] == SensorValue[Encoder2]) {
-				// The motors are synchronized
-				motor[rightMotor] = speed * direction;
-				motor[leftMotor]  = speed * direction;
-		  }
-			else if (SensorValue[Encoder1] > SensorValue[Encoder2]) {
-				// Motors are not synchronized, correct with motor port 2
-				motor[rightMotor] = 0.7 * speed * direction;
-				motor[leftMotor]  = speed * direction;
-			}
-			else {
-			  motor[rightMotor] = speed * direction;
-			  motor[leftMotor] = 0.7 * speed * direction;
-		  }
-	  }
-	  // The robot is moving backwards, do this
-	  else {
-	    if (SensorValue[Encoder1] == SensorValue[Encoder2]) {
-				// The motors are synchronized
-				motor[rightMotor] = speed * direction;
-				motor[leftMotor]  = speed * direction;
-		  }
-			else if (SensorValue[Encoder1] < SensorValue[Encoder2]) {
-				// Motors are not synchronized, correct with motor port 2
-				motor[rightMotor] = 0.7 * speed * direction;
-				motor[leftMotor]  = speed * direction;
-			}
-			else {
-			  motor[rightMotor] = speed * direction;
-			  motor[leftMotor] = 0.7 * speed * direction;
-		  }
-	  }
-  }
+        // If the robot is moving forwards, execute the following
+        if (direction == 1) {
+            if (SensorValue[Encoder1] == SensorValue[Encoder2]) {
+                // The motors are synchronized
+                motor[rightMotor] = speed * direction;
+                motor[leftMotor]  = speed * direction;
+            }
+            else if (SensorValue[Encoder1] > SensorValue[Encoder2]) {
+                // Motors are not synchronized, correct with motor port 2
+                motor[rightMotor] = 0.7 * speed * direction;
+                motor[leftMotor]  = speed * direction;
+            }
+            else {
+                motor[rightMotor] = speed * direction;
+                motor[leftMotor] = 0.7 * speed * direction;
+            }
+        }
+        // The robot is moving backwards, do this
+        else {
+            if (SensorValue[Encoder1] == SensorValue[Encoder2]) {
+                // The motors are synchronized
+                motor[rightMotor] = speed * direction;
+                motor[leftMotor]  = speed * direction;
+            }
+            else if (SensorValue[Encoder1] < SensorValue[Encoder2]) {
+                // Motors are not synchronized, correct with motor port 2
+                motor[rightMotor] = 0.7 * speed * direction;
+                motor[leftMotor]  = speed * direction;
+            }
+            else {
+                motor[rightMotor] = speed * direction;
+                motor[leftMotor] = 0.7 * speed * direction;
+            }
+        }
+    }
 }
 
 void wait(int milliseconds) {
-  motor[rightMotor] = 0;
-  motor[leftMotor] = 0;
-  wait1Msec(milliseconds);
+    motor[rightMotor] = 0;
+    motor[leftMotor] = 0;
+    wait1Msec(milliseconds);
 }
 
 void turn(int degrees, int speed) {
-  /*  Degrees is between -180 and 180
-      Positive numbers are counter-clockwise
-      Negative numbers are clockwise
+    /*  Degrees is between -180 and 180
+        Positive numbers are counter-clockwise
+        Negative numbers are clockwise
 
-      Turning either 180 degrees or -180 degrees is a full circle
-      90 deg turn is full left
-      -90 deg is full right
+        Turning either 180 degrees or -180 degrees is a full circle
+        90 deg turn is full left
+        -90 deg is full right
 
-      Left turn = leftMotor backwards, rightMotor forwards
-      Right turn = rightMotor backwards, leftMotor fowards
-  */
+        Left turn = leftMotor backwards, rightMotor forwards
+        Right turn = rightMotor backwards, leftMotor fowards
+        */
 
-  //Reset the encoders
-  SensorValue[Encoder1] = 0;
-  SensorValue[Encoder2] = 0;
+    //Reset the encoders
+    SensorValue[Encoder1] = 0;
+    SensorValue[Encoder2] = 0;
 
-  int rotations = degrees * M;
-  if (rotations > 0) {
-    //Left turn
-    while (SensorValue[Encoder1] < rotations){
-      motor[leftMotor] = -speed;
-      motor[rightMotor] = speed;
+    int rotations = degrees * M;
+    if (rotations > 0) {
+        //Left turn
+        while (SensorValue[Encoder1] < rotations){
+            motor[leftMotor] = -speed;
+            motor[rightMotor] = speed;
+        }
     }
-  }
-  else {
-    //Right turn
-    while (SensorValue[Encoder1] > rotations * 1.25){
-      motor[leftMotor] = speed;
-      motor[rightMotor] = -speed;
+    else {
+        //Right turn
+        while (SensorValue[Encoder1] > rotations * 1.25){
+            motor[leftMotor] = speed;
+            motor[rightMotor] = -speed;
+        }
     }
-  }
 }
 
 
 task main()
 {
-  for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
+        wait(1000);
+        move(FULL_SPEED / 2, FORWARDS, N);
+        wait(1000);
+        switch (i) {
+            case 0:
+                turn(90, 50);
+                break;
+            case 1:
+                turn(-90, 50);
+                break;
+            case 2:
+                turn(-90, 50);
+                break;
+        }
+    }
     wait(1000);
     move(FULL_SPEED / 2, FORWARDS, N);
-    wait(1000);
-    switch (i) {
-      case 0:
-        turn(90, 50);
-        break;
-      case 1:
-        turn(-90, 50);
-        break;
-      case 2:
-        turn(-90, 50);
-        break;
-    }
-  }
-  wait(1000);
-  move(FULL_SPEED / 2, FORWARDS, N);
 }
