@@ -56,7 +56,7 @@ static const float M = 2.896;
 
 */
 
-void move(int speed, int direction, int rotations) {
+int move(int speed, int direction, int rotations) {
     //Self-correcting movement function, moves based on rotations of the wheels
 
     //Reset the encoders
@@ -64,6 +64,11 @@ void move(int speed, int direction, int rotations) {
     SensorValue[Encoder2] = 0;
 
     while (abs(SensorValue[Encoder1]) < rotations) {
+
+        //Emergency stop sequence
+        if (vexRT[Btn7L] && vexRT[Btn7D])
+          return -1;
+
         motor[rightMotor] = speed * direction;
         motor[leftMotor]  = speed * direction;
 
@@ -102,6 +107,7 @@ void move(int speed, int direction, int rotations) {
             }
         }
     }
+    return 0;
 }
 
 void wait(int milliseconds) {
@@ -110,7 +116,7 @@ void wait(int milliseconds) {
     wait1Msec(milliseconds);
 }
 
-void turn(int degrees, int speed) {
+int turn(int degrees, int speed) {
     /*  Degrees is between -180 and 180
         Positive numbers are counter-clockwise
         Negative numbers are clockwise
@@ -130,39 +136,48 @@ void turn(int degrees, int speed) {
     int rotations = degrees * M;
     if (rotations > 0) {
         //Left turn
-        while (SensorValue[Encoder1] < rotations){
+        while (SensorValue[Encoder1] < rotations) {
+            if (vexRT[Btn7L] && vexRT[Btn7D])
+                return -1;
             motor[leftMotor] = -speed;
             motor[rightMotor] = speed;
         }
     }
     else {
         //Right turn
-        while (SensorValue[Encoder1] > rotations * 1.25){
+        while (SensorValue[Encoder1] > rotations * 1.25) {
+            if (vexRT[Btn7L] && vexRT[Btn7D])
+                return -1;
             motor[leftMotor] = speed;
             motor[rightMotor] = -speed;
         }
     }
+    return 0;
 }
 
 
 task main()
 {
+    int exitcode = 0;
     for (int i = 0; i < 3; i++) {
-        if (vexRT[Btn7L] && vexRT[Btn7D])
+        if ((vexRT[Btn7L] && vexRT[Btn7D]) || exitcode == -1)
           goto end;
 
         wait(1000);
-        move(FULL_SPEED / 2, FORWARDS, N);
+        exitcode = move(FULL_SPEED / 2, FORWARDS, N);
+        if (exitcode == -1)
+            goto end;
+
         wait(1000);
         switch (i) {
             case 0:
-                turn(90, 50);
+                exitcode = turn(90, 50);
                 break;
             case 1:
-                turn(-90, 50);
+                exitcode = turn(-90, 50);
                 break;
             case 2:
-                turn(-90, 50);
+                exitcode = turn(-90, 50);
                 break;
         }
     }
