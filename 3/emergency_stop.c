@@ -148,6 +148,8 @@ void turn(int degrees, int speed) {
 task main()
 {
     for (int i = 0; i < 3; i++) {
+        if (vexRT[Btn7L] && vexRT[Btn7D])
+          goto end;
 
         wait(1000);
         move(FULL_SPEED / 2, FORWARDS, N);

@@ -1,0 +1,38 @@
+-- PART 1 --
+
+Implement analog stick movement for the robot
+leftStick = turning
+rightStick = movement
+
+leftStick and rightStick range = signed 8-bit integer
+
+while True:
+    if leftStick[x] != 0:
+        turn(leftStick[x])
+    if rightStick[y] != 0:
+        move(rightStick[y])
+
+-- PART 2 --
+
+Implement analog stick movement and arm movement
+
+while True:
+
+    if leftStick[x] != 0:
+        turn(leftStick[x])
+    if rightStick[y] != 0:
+        move(rightStick[y])
+
+    if button6[u] is pushed:
+        move_arm(10)
+    if button6[d] is pushed:
+        move_arm(-10)
+
+-- PART 3 --
+
+Implement an emergency stop
+
+while True:
+    turning_and_moving()
+    if button7[l] is pushed and button8[r] is pushed:
+        break
