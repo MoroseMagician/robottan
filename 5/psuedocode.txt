@@ -1,0 +1,31 @@
+--- [PSUEDOCODE] ---
+
+    move_claw_down_until_limit_switch()
+    open_claw_for_x_seconds()
+    move_claw_up()
+
+    while sonar value greater than 20 cm:
+        if centerLineFollower detects line:
+            move_forwards()
+        else if leftLineFollower detects line:
+            turn_left()
+        else:
+            turn_right()
+
+    move_claw_down()
+    close_claw()
+    move_claw_up()
+
+    turn(180 degrees)
+
+    while sonar value greater than 10 cm:
+        if centerLineFollower detects line:
+            move_forwards()
+        else if leftLineFollower detects line:
+            turn_left()
+        else:
+            turn right
+
+    open_claw()
+
+--- [PSUEDOCODE] ---

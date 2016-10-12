@@ -1,0 +1,30 @@
+--- [DIGITAL PORTS] ---
+
+Port 1  - Motor encoder     [RIGHT]
+Port 2  - Motor encoder     
+Port 3  - Motor encoder     [LEFT]
+Port 4  - Motor encoder
+
+Port 7  - Limit switch
+Port 8  - Sonar sensor      [INPUT]
+Port 9  - Sonar sensor      [OUTPUT]
+
+Port 10 - Bumper button
+
+
+
+--- [ANALOG PORTS] ---
+
+Port 1  - Line follower     [LEFT   - BLACK]
+Port 2  - Line follower     [MIDDLE - WHITE]
+Port 3  - Line follower     [RIGHT  -  BLUE]
+
+Port 4  - Arm potentiometer
+
+
+--- [MOTOR PORTS] ---
+
+Port 2  - Right motor
+Port 3  - Left motor        [INVERTED]
+Port 6  - Arm motor
+Port 7  - Claw open / close
